@@ -54,7 +54,16 @@ public class MainFrame_LD extends JFrame{
 
 /*封面按键？
 * */
-        mainPanel.add(contentPane, "zhongjianye?");         //添加页面及索引？
+        ImageIcon images[][] = new  ImageIcon[2][4];
+        for (int i =0;i<3;i++){
+            for (int j =0;j<2;j++){
+              ImageIcon img = new ImageIcon("pic"+File.separator+ j + i +".png");
+              img.setImage(img.getImage().getScaledInstance(WIDTH/8,HEIGHT*10/72,Image.SCALE_DEFAULT));
+              images[j][i] = img;
+            }
+        }
+
+        mainPanel.add(contentPane, "主界面");         //添加页面及索引？
         mainPanel.add(gamePanel, "new game");
 
         setContentPane(mainPanel);
@@ -67,40 +76,42 @@ public class MainFrame_LD extends JFrame{
 
         JPanel panelMenu = new JPanel();
         panelMenu.setOpaque(false);         //透明度
-        panelMenu.setBounds((int)(WIDTH * 7/16), (int)(HEIGHT / 2), 160, 400);
+        panelMenu.setBounds((int)(WIDTH * 7/16), (int)(HEIGHT / 2), 160, 200);
 
         panelMenu.setVisible(true);
         contentPane.add(panelMenu);
-        panelMenu.setLayout(new BoxLayout(panelMenu,BoxLayout.Y_AXIS));
+        panelMenu.setLayout(new GridLayout(2,1,0,0));
 
         JButton buttonLocalGame = new MenuButton();         //新游戏按键
-        buttonLocalGame.setIcon(new ImageIcon("pic"+ File.separator+"buttonLocalGame1.png"));
+        buttonLocalGame.setPreferredSize(new Dimension(WIDTH/8,HEIGHT*10/36));
+
+        buttonLocalGame.setIcon(images[0][0]);
         panelMenu.add(buttonLocalGame);
         buttonLocalGame.addMouseListener(new MouseListener() {
 
             @Override
             public void mouseReleased(MouseEvent e) {           //松开
                 // TODO Auto-generated method stub
-                buttonLocalGame.setIcon(new ImageIcon("pic"+ File.separator+"buttonLocalGame2.png"));
+                buttonLocalGame.setIcon(images[0][1]);
                 cardLayout.show(mainPanel, "new game");
             }
 
             @Override
             public void mousePressed(MouseEvent e) {            //按下
                 // TODO Auto-generated method stub
-                buttonLocalGame.setIcon(new ImageIcon("pic"+ File.separator+"buttonLocalGame3.png"));
+                buttonLocalGame.setIcon(images[0][1]);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {             //移开
                 // TODO Auto-generated method stub
-                buttonLocalGame.setIcon(new ImageIcon("pic"+ File.separator+"buttonLocalGame1.png"));
+                buttonLocalGame.setIcon(images[0][0]);
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {            //移入
                 // TODO Auto-generated method stub
-                buttonLocalGame.setIcon(new ImageIcon("pic"+ File.separator+"buttonLocalGame5.png"));
+                buttonLocalGame.setIcon(images[0][2]);
             }
 
             @Override
@@ -110,33 +121,33 @@ public class MainFrame_LD extends JFrame{
             }
         });
         JButton buttonExit = new MenuButton();          //退出游戏按键
-        buttonExit.setIcon(new ImageIcon("pic"+ File.separator+"buttonExit3.png"));
+        buttonExit.setIcon(images[1][0]);
         panelMenu.add(buttonExit);
         buttonExit.addMouseListener(new MouseListener() {
 
             @Override
             public void mouseReleased(MouseEvent e) {
                 // TODO Auto-generated method stub
-                buttonExit.setIcon(new ImageIcon("pic"+ File.separator+"buttonExit1.png"));
+                buttonExit.setIcon(images[1][0]);
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
                 // TODO Auto-generated method stub
-                buttonExit.setIcon(new ImageIcon("pic"+ File.separator+"buttonExit2.png"));
+                buttonExit.setIcon(images[1][2]);
                 dispose();
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 // TODO Auto-generated method stub
-                buttonExit.setIcon(new ImageIcon("pic"+ File.separator+"buttonExit3.png"));
+                buttonExit.setIcon(images[1][0]);
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
                 // TODO Auto-generated method stub
-                buttonExit.setIcon(new ImageIcon("pic"+ File.separator+"buttonExit4.png"));
+                buttonExit.setIcon(images[1][1]);
             }
 
             @Override

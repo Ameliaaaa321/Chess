@@ -5,11 +5,19 @@ package Chess;
 import java.util.ArrayList;
 
 public class Play {
-    public static void main(String[] args) {
+
+    public void initialBoard(){
         Board board = new Board();
         initialize(board, 1, 8, 7);
         initialize(board, 0, 1, 2);
     }
+
+
+//    public static void main(String[] args) {
+//        Board board = new Board();
+//        initialize(board, 1, 8, 7);
+//        initialize(board, 0, 1, 2);
+//    }
 
     // 初始时在棋盘的默认位置上创建棋子, row1是王所在行，row2是兵所在行
     static void initialize(Board board, int side, int row1, int row2) {

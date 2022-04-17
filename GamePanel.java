@@ -1,4 +1,4 @@
-package com.company;
+package Chess;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -52,7 +52,7 @@ public class GamePanel extends JPanel {
     public GamePanel() {
         backGroundPanel();
 
-        initiateEmptyChessboard();
+//        initiateEmptyChessboard();
 
 //
     }

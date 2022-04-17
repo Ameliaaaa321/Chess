@@ -1,4 +1,4 @@
-package chess;
+package com.company;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

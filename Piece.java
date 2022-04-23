@@ -447,12 +447,14 @@ class P extends Piece {
     boolean isFirstStep = true;    // 会在对兵调用Play.movePiece时更改此参数，判断是否还没走第一步
     int countSteps = 0;    // 会在对兵调用Play.movePiece时更改此参数，记录上次纵向移动的距离
     ArrayList<P> passerbys = new ArrayList<>();    // 把过路兵装进去，只有当首次遇到这个过路兵时才可以吃它
+    boolean isEatPasserby = false;    // 有没有过路兵可吃
 
     public P(int x, int y, int side, Board board) {
         super(x, y, side, board);
     }
 
     public ArrayList<Position> findValidMovement() {
+        isEatPasserby = false;
         ArrayList<Position> validMovement = new ArrayList<>();
 
         if (side == 0) {
@@ -490,13 +492,16 @@ class P extends Piece {
         }
 
         // 吃过路兵
-        eatPasserby(x+1, y, validMovement, passerbys);
-        eatPasserby(x-1, y, validMovement, passerbys);
+        boolean eatPasserby1 = eatPasserby(x+1, y, validMovement, passerbys);
+        boolean eatPasserby2 = eatPasserby(x-1, y, validMovement, passerbys);
+        if (eatPasserby1 || eatPasserby2) {
+            isEatPasserby = true;
+        }
 
         return validMovement;
     }
 
-    private void eatPasserby(int x, int y, ArrayList<Position> validMovement, ArrayList<P> passerbys) {
+    private boolean eatPasserby(int x, int y, ArrayList<Position> validMovement, ArrayList<P> passerbys) {
         Position p = new Position(x, y);
         if (isOnBoard(p) && board.positions[x][y].piece != null && board.positions[x][y].piece instanceof P
             && board.positions[x][y].piece.side != this.side && ((P) board.positions[x][y].piece).countSteps == 2
@@ -508,6 +513,9 @@ class P extends Piece {
                     validMovement.add(board.positions[x][y-1]);
                     passerbys.add((P)board.positions[x][y].piece);
                 }
+                return true;
+        }else {
+            return false;
         }
     }
 }

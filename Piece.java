@@ -2,8 +2,6 @@ package Chess;
 
 import java.util.ArrayList;
 
-// 特殊规则还没有写进来，马和兵也没写
-
 // 多态（继承、重写、向上转型）：Piece是父类，包括6个子类，即所有6种棋子
 // 每个棋子对象里面，储存了坐标和黑白方，拥有可以判断下一步可以走哪的函数
 
@@ -400,16 +398,116 @@ class N extends Piece {
         super(x, y, side, board);
     }
 
+    public ArrayList<Position> findValidMovement() {
+        ArrayList<Position> validMovement = new ArrayList<>();
+
+        Position p;
+        p = new Position(x+1, y+2);
+        if (isOnBoard(p) && (board.positions[x+1][y+2].piece == null || board.positions[x+1][y+2].piece.side != this.side)) {
+            validMovement.add(board.positions[x+1][y+2]);
+        }
+        p = new Position(x+2, y+1);
+        if (isOnBoard(p) && (board.positions[x+2][y+1].piece == null || board.positions[x+2][y+1].piece.side != this.side)) {
+            validMovement.add(board.positions[x+2][y+1]);
+        }
+        p = new Position(x+2, y-1);
+        if (isOnBoard(p) && (board.positions[x+2][y-1].piece == null || board.positions[x+2][y-1].piece.side != this.side)) {
+            validMovement.add(board.positions[x+2][y-1]);
+        }
+        p = new Position(x+1, y-2);
+        if (isOnBoard(p) && (board.positions[x+1][y-2].piece == null || board.positions[x+1][y-2].piece.side != this.side)) {
+            validMovement.add(board.positions[x+1][y-2]);
+        }
+        p = new Position(x-1, y-2);
+        if (isOnBoard(p) && (board.positions[x-1][y-2].piece == null || board.positions[x-1][y-2].piece.side != this.side)) {
+            validMovement.add(board.positions[x-1][y-2]);
+        }
+        p = new Position(x-2, y-1);
+        if (isOnBoard(p) && (board.positions[x-2][y-1].piece == null || board.positions[x-2][y-1].piece.side != this.side)) {
+            validMovement.add(board.positions[x-2][y-1]);
+        }
+        p = new Position(x-1, y+2);
+        if (isOnBoard(p) && (board.positions[x-1][y+2].piece == null || board.positions[x-1][y+2].piece.side != this.side)) {
+            validMovement.add(board.positions[x-1][y+2]);
+        }
+        p = new Position(x-2, y+1);
+        if (isOnBoard(p) && (board.positions[x-2][y+1].piece == null || board.positions[x-2][y+1].piece.side != this.side)) {
+            validMovement.add(board.positions[x-2][y+1]);
+        }
+
+        return validMovement;
+    }
 }
 
-// 兵
+// 兵（包含了常规走法和吃过路兵）
 class P extends Piece {
     int x, y;
     int side;
     Board board;
+    boolean isFirstStep = true;    // 会在对兵调用Play.movePiece时更改此参数，判断是否还没走第一步
+    int countSteps = 0;    // 会在对兵调用Play.movePiece时更改此参数，记录上次纵向移动的距离
+    ArrayList<P> passerbys = new ArrayList<>();    // 把过路兵装进去，只有当首次遇到这个过路兵时才可以吃它
 
     public P(int x, int y, int side, Board board) {
         super(x, y, side, board);
     }
 
+    public ArrayList<Position> findValidMovement() {
+        ArrayList<Position> validMovement = new ArrayList<>();
+
+        if (side == 0) {
+            // 前进一步
+            validMovement.add(board.positions[x][y+1]);
+            // 第一次走可以前进两步
+            if (isFirstStep) {
+                validMovement.add(board.positions[x][y+2]);
+            }
+            // 斜向前吃子
+            Position p = new Position(x+1,y+1);
+            if (isOnBoard(p) && board.positions[x+1][y+1].piece != null && board.positions[x+1][y+1].piece.side == 1) {
+                validMovement.add(board.positions[x+1][y+1]);
+            }
+            p = new Position(x-1, y+1);
+            if (isOnBoard(p) && board.positions[x-1][y+1].piece != null && board.positions[x-1][y+1].piece.side == 1) {
+                validMovement.add(board.positions[x-1][y+1]);
+            }
+        }else if (side == 1) {
+            // 前进一步
+            validMovement.add(board.positions[x][y-1]);
+            // 第一次走可以前进两步
+            if (isFirstStep) {
+                validMovement.add(board.positions[x][y-2]);
+            }
+            // 斜向前吃子
+            Position p = new Position(x+1,y-1);
+            if (isOnBoard(p) && board.positions[x+1][y-1].piece != null && board.positions[x+1][y-1].piece.side == 0) {
+                validMovement.add(board.positions[x+1][y-1]);
+            }
+            p = new Position(x-1, y-1);
+            if (isOnBoard(p) && board.positions[x-1][y-1].piece != null && board.positions[x-1][y-1].piece.side == 0) {
+                validMovement.add(board.positions[x-1][y-1]);
+            }
+        }
+
+        // 吃过路兵
+        eatPasserby(x+1, y, validMovement, passerbys);
+        eatPasserby(x-1, y, validMovement, passerbys);
+
+        return validMovement;
+    }
+
+    private void eatPasserby(int x, int y, ArrayList<Position> validMovement, ArrayList<P> passerbys) {
+        Position p = new Position(x, y);
+        if (isOnBoard(p) && board.positions[x][y].piece != null && board.positions[x][y].piece instanceof P
+            && board.positions[x][y].piece.side != this.side && ((P) board.positions[x][y].piece).countSteps == 2
+            && !passerbys.contains((P) board.positions[x][y].piece)) {
+                if (side == 0) {
+                    validMovement.add(board.positions[x][y+1]);
+                    passerbys.add((P)board.positions[x][y].piece);
+                }else if (side == 1) {
+                    validMovement.add(board.positions[x][y-1]);
+                    passerbys.add((P)board.positions[x][y].piece);
+                }
+        }
+    }
 }
